@@ -44,8 +44,8 @@ public class ContractServiceImpl implements ContractService {
     @Autowired
     private ContractMapper contractMapper;
 
-    @Resource
-    private MemberService memberService;
+    /*@Resource
+    private MemberService memberService;*/
 
     @Autowired
     private ActFlowCommService actFlowCommService;
@@ -245,12 +245,12 @@ public class ContractServiceImpl implements ContractService {
         // 通过丙方手机号关联合同
         String phone = null;
         Long userId = UserThreadLocal.getUserId();
-        if (ObjectUtil.isNotEmpty(userId)) {
+        /*if (ObjectUtil.isNotEmpty(userId)) {
             Member byId = memberService.getById(userId);
             if (ObjectUtil.isNotEmpty(byId)) {
                 phone = byId.getPhone();
             }
-        }
+        }*/
         Page<List<Contract>> page = contractMapper.selectByPage(phone, contractNo, elderName, status, startTime, endTime);
         return PageResponse.of(page, ContractVo.class);
     }

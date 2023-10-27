@@ -54,8 +54,8 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     private WechatWapPayHandler wechatWapPayHandler;
 
-    @Resource
-    private MemberService memberService;
+    /*@Resource
+    private MemberService memberService;*/
 
     @Resource
     private BillService billService;
@@ -101,8 +101,8 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.insert(order);
 
         TradingVo tradingVo = new TradingVo();
-        Member member = memberService.getById(userId);
-        tradingVo.setOpenId(member.getOpenId());
+        /*Member member = memberService.getById(userId);
+        tradingVo.setOpenId(member.getOpenId());*/
         tradingVo.setMemo("服务下单");
         tradingVo.setTradingAmount(order.getAmount());
         tradingVo.setProductOrderNo(order.getId());

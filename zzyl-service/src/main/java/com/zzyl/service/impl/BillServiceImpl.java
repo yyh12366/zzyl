@@ -67,8 +67,8 @@ public class BillServiceImpl implements BillService {
     @Resource
     private WechatWapPayHandler wechatWapPayHandler;
 
-    @Resource
-    private MemberService memberService;
+//    @Resource
+//    private MemberService memberService;
 
     @Resource
     private MemberElderService memberElderService;
@@ -263,13 +263,13 @@ public class BillServiceImpl implements BillService {
                     refundRecordVo = BeanUtil.toBean(listByTradingOrderNo.get(0), RefundRecordVo.class);
 
                 }
-                Member byId = memberService.getById(tradByTradingOrderNo.getCreateBy());
+                /*Member byId = memberService.getById(tradByTradingOrderNo.getCreateBy());
                 if (ObjectUtil.isNotEmpty(byId)) {
                     tradByTradingOrderNo.setMemberCreator(byId.getName());
                     tradByTradingOrderNo.setPhone(byId.getPhone());
                     billVo.setMemberCreator(byId.getName());
                     refundRecordVo.setCreator(byId.getName());
-                }
+                }*/
                 billVo.setRefundRecordVo(refundRecordVo);
                 List<Order> orders = orderMapper.selectByTradingOrderNo(Lists.newArrayList(billVo.getTradingOrderNo()));
                 if (CollUtil.isNotEmpty(orders)) {
@@ -916,7 +916,7 @@ public class BillServiceImpl implements BillService {
         // 交易单
         Trading trading = tradingMapper.selectByProductOrderNo(bill.getId(), "1");
         Long userId = UserThreadLocal.getUserId();
-        Member byId = memberService.getById(userId);
+//        Member byId = memberService.getById(userId);
         if (ObjectUtil.isNotEmpty(trading)) {
             TradingVo tradingVo = new TradingVo();
             tradingVo.setTradingOrderNo(trading.getTradingOrderNo());
@@ -927,9 +927,9 @@ public class BillServiceImpl implements BillService {
         TradingVo tradingVo = new TradingVo();
         tradingVo.setMemo("服务下单");
 
-        if (ObjectUtil.isNotEmpty(userId)) {
-            tradingVo.setOpenId(byId.getOpenId());
-        }
+//        if (ObjectUtil.isNotEmpty(userId)) {
+//            tradingVo.setOpenId(byId.getOpenId());
+//        }
         tradingVo.setTradingType("1");
         tradingVo.setTradingAmount(bill.getPayableAmount());
         tradingVo.setProductOrderNo(bill.getId());

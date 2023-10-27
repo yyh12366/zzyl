@@ -2,7 +2,6 @@ package com.zzyl.controller;
 
 import com.zzyl.base.PageResponse;
 import com.zzyl.base.ResponseResult;
-import com.zzyl.service.MemberService;
 import com.zzyl.vo.MemberVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,9 +22,9 @@ import javax.annotation.Resource;
 @RequestMapping("/c-user")
 public class CustomerController {
 
-    @Resource
+   /* @Resource
     private MemberService memberService;
-
+*/
 
     /**
      * 分页查询客户信息
@@ -39,7 +38,8 @@ public class CustomerController {
     @ApiOperation(value = "分页查询客户信息", notes = "根据页码、每页数量、手机号、昵称分页查询客户信息")
     @GetMapping("page")
     public ResponseResult<PageResponse<MemberVo>> page(Integer pageNum, Integer pageSize, String phone, String nickname) {
-        PageResponse<MemberVo> pageResponse = memberService.page(pageNum, pageSize, phone, nickname);
-        return ResponseResult.success(pageResponse);
+       /* PageResponse<MemberVo> pageResponse = memberService.page(pageNum, pageSize, phone, nickname);
+        return ResponseResult.success(pageResponse);*/
+        return null;
     }
 }
