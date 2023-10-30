@@ -96,8 +96,8 @@ zzyl:
       accessKeySecret: LYUKZH7HQGBoD025pmSq0fQsREaOYD
       bucketName: itheim
   wechat:
-    appId: wxa54e0997e8b6649e
-    appSecret: 9e4b693aa8cee71a9077e15dcac30b52
+    appId: wxb2ec93d73ff49512
+    appSecret: 71f395124f4ef030e94e7bd092d2cb94
 #  wechat:
 #    appId: wxa37ad44a9d9ab836
 #    appSecret: 85ef0e856bafed3eb55e279c3a48fa49

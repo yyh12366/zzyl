@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzyl.mapper.ReservationMapper">
+
+    <resultMap id="reservationMap" type="com.zzyl.entity.Reservation">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="mobile" property="mobile"/>
+        <result column="time" property="time"/>
+        <result column="visitor" property="visitor"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+    </resultMap>
+    <insert id="insertReservation" keyProperty="id" useGeneratedKeys="true" parameterType="com.zzyl.entity.Reservation">
+        insert into reservation (name, mobile, time, visitor, type, status, create_by, remark, create_time)
+        values (#{name}, #{mobile}, #{time}, #{visitor}, #{type}, #{status}, #{createBy}, #{remark}, #{createTime})
+
+    </insert>
+    <update id="update" parameterType="com.zzyl.entity.Reservation">
+        update reservation
+        <set>
+            <if test="name != null and name!='' ">
+                name=#{name},
+            </if>
+            <if test="mobile != null and mobile!='' ">
+                mobile=#{mobile},
+            </if>
+            <if test="visitor != null">
+                visitor=#{visitor},
+            </if>
+            <if test="type != null">
+                type=#{type},
+            </if>
+            <if test="remark != null">
+                remark=#{remark},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="time != null">
+                time = #{time}
+            </if>
+        </set>
+        where id = #{id}
+
+    </update>
+    <select id="queryReservationByPage" resultMap="reservationMap">
+        select r.id, r.name, r.mobile, r.time, r.visitor, r.type, r.status, r.create_by, r.remark, r.create_time
+        from reservation r
+        <where>
+            <if test="status != null">
+                and r.status = #{status, jdbcType=INTEGER}
+            </if>
+            <if test="createBy != null">
+                AND r.create_by = #{createBy}
+            </if>
+        </where>
+        order by r.create_time desc
+    </select>
+
+
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from reservation
+        <where>
+            <if test="begin!=null">and create_time &gt;#{begin}</if>
+            <if test="end!=null">and create_time &lt;#{end}</if>
+            <if test="status!=null">and status=#{status}</if>
+            <if test="createBy!=null">and create_by=#{createBy}</if>
+        </where>
+
+    </select>
+    <select id="getEachTimeReservationCount" resultType="com.zzyl.vo.TimeCountVo">
+
+        select time, 6 - count(*) as count
+        from reservation
+        where `time` between #{start}
+            and #{end}
+          and status != 2
+        group by  time
+    </select>
+
+</mapper>

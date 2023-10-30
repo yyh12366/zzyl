@@ -14,6 +14,7 @@ public enum ReservationStatus {
     EXPIRED("过期", 3); //过期
 
     private String name;
+
     @JsonValue
     private Integer ordinal;
 

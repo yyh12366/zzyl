@@ -5,6 +5,7 @@ import com.github.pagehelper.Page;
 import com.zzyl.entity.Member;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface MemberMapper {
      * @param member 会员实体类
      * @return 返回保存结果
      */
-    int save(Member member);
+   // int save(Member member);
 
 
     /**
@@ -34,7 +35,7 @@ public interface MemberMapper {
      * @param member 会员实体类
      * @return 返回更新结果
      */
-    int update(Member member);
+   // int update(Member member);
 
     /**
      * 根据ID删除会员信息
@@ -48,7 +49,7 @@ public interface MemberMapper {
      * @param openId 微信openid
      * @return 返回会员实体类
      */
-    Member getByOpenid(String openId);
+   // Member getByOpenid(String openId);
 
 
     /**
@@ -59,6 +60,12 @@ public interface MemberMapper {
      */
     Page<List<Member>> page(@Param("phone") String phone, @Param("name") String nickname);
 
+    @Select("SELECT * FROM member WHERE open_id = #{openId}")
+    Member getByOpenId(String openId);
+
+    void save(Member member);
+
+    void update(Member member);
 
 }
 

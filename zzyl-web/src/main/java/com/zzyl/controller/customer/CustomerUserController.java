@@ -36,6 +36,6 @@ public class CustomerUserController {
     public ResponseResult<LoginVo> login(@RequestBody UserLoginRequestDto userLoginRequestDto) throws IOException {
         LoginVo login = memberService.login(userLoginRequestDto);
 
-        return success(login);
+        return ResponseResult.success(login);
     }
 }

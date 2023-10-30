@@ -18,7 +18,7 @@ public interface MemberService {
      *
      * @param member 用户信息
      */
-    void save(Member member);
+  //  void save(Member member);
 
 
     /**
@@ -27,7 +27,7 @@ public interface MemberService {
      * @param openid 微信ID
      * @return 用户信息
      */
-    Member getByOpenid(String openid);
+   // Member getByOpenid(String openid);
 
 
     /**
@@ -36,7 +36,7 @@ public interface MemberService {
      * @param id 用户id
      * @return 用户信息
      */
-    Member getById(Long id);
+   // Member getById(Long id);
 
     /**
      * 登录
@@ -53,7 +53,7 @@ public interface MemberService {
      * @param member 用户信息
      * @return 更新结果
      */
-    int update(Member member);
+    //int update(Member member);
 
     /**
      * 分页查询用户列表
@@ -64,7 +64,7 @@ public interface MemberService {
      * @param nickname 昵称
      * @return 分页结果
      */
-    PageResponse<MemberVo> page(Integer page, Integer pageSize, String phone, String nickname);
+   // PageResponse<MemberVo> page(Integer page, Integer pageSize, String phone, String nickname);
 
 
 }

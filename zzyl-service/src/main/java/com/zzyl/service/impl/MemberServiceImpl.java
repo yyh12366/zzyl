@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ public class MemberServiceImpl implements MemberService {
      * 新增
      * @param member 用户信息
      */
-    @Override
+   /* @Override
     public void save(Member member) {
         //判断id是否存在，不存在则新增，否则是更新
         if(ObjectUtil.isEmpty(member.getId())){
@@ -71,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
             return;
         }
         update(member);
-    }
+    }*/
 
     /**
      * 根据openid查询用户
@@ -79,10 +80,10 @@ public class MemberServiceImpl implements MemberService {
      * @param openId 微信ID
      * @return 用户信息
      */
-    @Override
+   /* @Override
     public Member getByOpenid(String openId) {
         return memberMapper.getByOpenid(openId);
-    }
+    }*/
 
 
     /**
@@ -94,41 +95,49 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public LoginVo login(UserLoginRequestDto userLoginRequestDto) throws IOException {
         // 1 调用微信开放平台小程序的api，根据code获取openid
-        JSONObject jsonObject = wechatService.getOpenid(userLoginRequestDto.getCode());
-        // 2 若code不正确，则获取不到openid，响应失败
-        if (ObjectUtil.isNotEmpty(jsonObject.getInt("errcode"))) {
-            throw new BaseException(jsonObject.getStr("errmsg"));
-        }
-        String openId = jsonObject.getStr("openid");
+        String openId = wechatService.getOpenid(userLoginRequestDto.getCode());
         /*
-         * 3 获取openid后,根据openid从数据库查询用户
-         * 3.1 如果为新用户，此处返回为null
-         * 3.2 如果为已经登录过的老用户，此处返回为member对象 （包含openId,phone,unionId等字段）
+         * 2 获取openid后,根据openid从数据库查询用户
+         * 2.1 如果为新用户，此处返回为null
+         * 2.2 如果为已经登录过的老用户，此处返回为member对象 （包含openId,phone,unionId等字段）
          */
-       Member member=  getByOpenid(openId);
+      // Member member=  getByOpenid(openId);
+        //2.根据openId查询用户
+        Member member = memberMapper.getByOpenId(openId);
+        //3.如果用户为空，则新增
+        if (ObjectUtil.isEmpty(member)) {
+            member = Member.builder().openId(openId).build();
+        }
+
 
         /*
          * 4 构造用户数据，设置openId,unionId
          * 4.1 如果member为null，则为新用户，需要构建新的member对象，并设置openId
          * 4.2 如果member不为null，则为老用户，无需设置openId,直接返回即可
          */
-        member = ObjectUtil.isNotEmpty(member) ? member : Member.builder().openId(openId).build();
+       /* member = ObjectUtil.isNotEmpty(member) ? member : Member.builder().openId(openId).build();*/
 
-        // 5 调用微信开放平台小程序的api获取微信绑定的手机号
+        // 4. 调用微信开放平台小程序的api获取微信绑定的手机号
         String phone = wechatService.getPhone(userLoginRequestDto.getPhoneCode());
 
+
+        //5.保存或修改用户
+        saveOrUpdate(member, phone);
         /*
          * 6 新用户绑定手机号或者老用户更新手机号,方法会自动作非空校验,不为空再比对手机号是否一致
          * 6.1 如果member.getPhone()为null，则为新用户，需要设置手机号，并保存数据库
          * 6.2 如果member.getPhone()不为null，但是与微信获取到的手机号不一样  则表示用户改了微信绑定的手机号，需要设置手机号，并保存数据库
          * 以上俩种情况，都需要重新设置手机号，并保存数据库
          */
-        if (ObjectUtil.notEqual(member.getPhone(), phone)) {
+       /* if (ObjectUtil.notEqual(member.getPhone(), phone)) {
             member.setPhone(phone);
             save(member);
-        }
-        // 7 将用户ID存入token,键为常量的用户id,值为从member对象中获取的id
-        Map<String, Object> claims = MapUtil.<String, Object>builder().put(Constants.JWT_USERID, member.getId()).build();
+        }*/
+/*        // 7 将用户ID存入token,键为常量的用户id,值为从member对象中获取的id
+        Map<String, Object> claims = MapUtil.<String, Object>builder().put(Constants.JWT_USERID, member.getId()).build();*/
+        //6.将用户id存入token,返回
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(Constants.JWT_USERID, member.getId());
         //给对应的用户存入用户名称
         claims.put(Constants.JWT_USERNAME, member.getName());
         // 8 封装token，参数是JWT签名加密和有效时间
@@ -148,9 +157,37 @@ public class MemberServiceImpl implements MemberService {
      * @param member 用户信息
      * @return 更新结果
      */
-    @Override
+   /* @Override
     public int update(Member member) {
         return memberMapper.update(member);
+    }*/
+
+
+    /**
+     * 保存或修改客户
+     *
+     * @param member
+     * @param phone
+     */
+    private void saveOrUpdate(Member member, String phone) {
+
+        //1.判断取到的手机号与数据库中保存的手机号不一样
+        if(ObjectUtil.notEqual(phone, member.getPhone())){
+            //设置手机号
+            member.setPhone(phone);
+        }
+        //2.判断id存在
+        if (ObjectUtil.isNotEmpty(member.getId())) {
+            memberMapper.update(member);
+            return;
+        }
+        //3.保存新的用户
+        //随机组装昵称，词组+手机号后四位
+        String nickName = DEFAULT_NICKNAME_PREFIX.get((int) (Math.random() * DEFAULT_NICKNAME_PREFIX.size()))
+                + StringUtils.substring(member.getPhone(), 7);
+
+        member.setName(nickName);
+        memberMapper.save(member);
     }
 
     /**
@@ -159,10 +196,10 @@ public class MemberServiceImpl implements MemberService {
      * @param id 用户id
      * @return 用户信息
      */
-    @Override
+  /*  @Override
     public Member getById(Long id) {
         return memberMapper.selectById(id);
-    }
+    }*/
 
 
 
@@ -185,7 +222,7 @@ public class MemberServiceImpl implements MemberService {
      * @param nickname 昵称
      * @return 分页结果
      */
-    @Override
+   /* @Override
     public PageResponse<MemberVo> page(Integer page, Integer pageSize, String phone, String nickname) {
         PageHelper.startPage(page, pageSize);
         Page<List<Member>> listPage = memberMapper.page(phone, nickname);
@@ -203,5 +240,5 @@ public class MemberServiceImpl implements MemberService {
             v.setElderNames(String.join(",", collect));
         });
         return pageResponse;
-    }
+    }*/
 }
