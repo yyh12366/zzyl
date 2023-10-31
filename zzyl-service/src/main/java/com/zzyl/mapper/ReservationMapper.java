@@ -9,6 +9,7 @@ import com.zzyl.vo.TimeCountVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,6 +52,11 @@ public interface ReservationMapper {
 
 
     List<TimeCountVo> getEachTimeReservationCount(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+
+
+    @Update("update reservation set status = 3 where status = 0 and time < #{now}")
+    void updateReservationStatus(LocalDateTime now);
 }
 
 

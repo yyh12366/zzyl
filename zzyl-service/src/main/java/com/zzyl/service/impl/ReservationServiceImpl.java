@@ -123,4 +123,18 @@ public class ReservationServiceImpl implements ReservationService {
         LocalDateTime end = start.plusHours(24);
         return reservationMapper.getEachTimeReservationCount(start, end);
     }
+
+
+
+
+
+
+    /**
+     * 过期状态修改
+     * @param now
+     */
+    @Override
+    public void updateReservationStatus(LocalDateTime now) {
+        reservationMapper.updateReservationStatus(now);
+    }
 }

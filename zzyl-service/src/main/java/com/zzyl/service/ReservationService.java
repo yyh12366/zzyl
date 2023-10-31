@@ -29,4 +29,11 @@ public interface ReservationService {
 
 
     List<TimeCountVo> getEachTimeReservationCount(LocalDateTime time);
+
+
+    /**
+     * 过期状态修改
+     * @param now
+     */
+    void updateReservationStatus(LocalDateTime now);
 }
